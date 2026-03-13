@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday NINOU 🩷</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary-pink: #ffb7c5;
+            --soft-pink: #ffe6e9;
+            --deep-pink: #ff8fa3;
+            --gold: #d4af37;
+            --text-color: #5a3a3a;
+            --book-width: 320px;
+            --book-height: 440px;
+            --book-depth: 40px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: url('https://image.qwenlm.ai/public_source/6386eeff-4b2f-4ba2-a9df-7a2a948947a9/11610569d-9001-4c93-acad-c7eaf3cb602f.png') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Playfair Display', serif;
+            perspective: 1500px;
+            overflow-x: hidden;
+        }
+
+        /* Overlay to soften background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 230, 233, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: -1;
+        }
+
+        /* Main Title */
+        .main-title {
+            position: absolute;
+            top: 5%;
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: var(--deep-pink);
+            text-shadow: 0 0 10px rgba(255, 143, 163, 0.6), 0 0 20px rgba(255, 143, 163, 0.4);
+            z-index: 10;
+            text-align: center;
+            animation: glow 3s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(255, 143, 163, 0.6); }
+            to { text-shadow: 0 0 25px rgba(255, 143, 163, 0.9), 0 0 10px white; }
+        }
+
+        /* 3D Book Container */
+        .scene {
+            width: var(--book-width);
+            height: var(--book-height);
+            position: relative;
+            z-index: 20;
+            cursor: pointer;
+            transition: transform 0.5s ease;
+        }
+
+        .scene:hover {
+            transform: translateY(-10px);
+        }
+
+        .book {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: rotateY(0deg);
+        }
+
+        .book.open {
+            transform: rotateY(-180deg);
+        }
+
+        /* Book Faces */
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px 12px 12px 4px;
+            backface-visibility: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Front Cover - Pink Roses */
+        .front-cover {
+            background: url('https://image.qwenlm.ai/public_source/6386eeff-4b2f-4ba2-a9df-7a2a948947a9/166958885-3918-4632-b0da-d5b3b43673ce.png') center/cover;
+            transform: rotateY(0deg);
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .front-cover::after {
+            content: 'Click to Open';
+            position: absolute;
+            bottom: 30px;
+            font-family: 'Great Vibes', cursive;
+            color: var(--gold);
+            font-size: 1.5rem;
+            opacity: 0.8;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            animation: bounce 2s infinite;
+        }
+
+        /* Back Cover (Inside Left Page visually when open) */
+        .back-cover {
+            background: #fff0f3;
+            transform: rotateY(180deg);
+            z-index: 1;
+            border-left: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .back-cover img {
+            width: 80%;
+            opacity: 0.8;
+            transform: rotate(-10deg);
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Inside Right Page (Message) */
+        .inside-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff9fa;
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+            z-index: 3;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-left: 4px solid var(--soft-pink);
+            box-shadow: inset 10px 0 20px rgba(0,0,0,0.05);
+        }
+
+        .inside-page::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px solid var(--primary-pink);
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        /* Typography inside book */
+        .message-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-color);
+            position: relative;
+            z-index: 5;
+        }
+
+        .message-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            color: var(--deep-pink);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .signature {
+            margin-top: 30px;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.8rem;
+            color: var(--gold);
+            display: block;
+            text-align: right;
+            width: 100%;
+        }
+
+        /* Typewriter Cursor */
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: var(--deep-pink);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Floating Elements */
+        .floating-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        .floater {
+            position: absolute;
+            opacity: 0.7;
+            animation: floatUp linear infinite;
+        }
+
+        .floater.cat {
+            width: 80px;
+            animation-duration: 15s;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+        }
+
+        .floater.heart {
+            font-size: 2rem;
+            color: var(--deep-pink);
+            animation-duration: 8s;
+        }
+
+        .floater.sparkle {
+            font-size: 1.5rem;
+            color: white;
+            animation-duration: 5s;
+            text-shadow: 0 0 5px gold;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            :root {
+                --book-width: 260px;
+                --book-height: 360px;
+            }
+            .main-title {
+                font-size: 3rem;
+                top: 2%;
+            }
+            .message-title {
+                font-size: 1.8rem;
+            }
+            .inside-page {
+                padding: 20px;
+            }
+            .message-content {
+                font-size: 0.95rem;
+            }
+        }
+        
+        /* Audio Control Hint */
+        .audio-hint {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.8rem;
+            color: var(--text-color);
+            opacity: 0.6;
+            z-index: 30;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="main-title">NINOU</h1>
+
+    <div class="floating-container" id="floatingContainer"></div>
+
+    <div class="scene" id="bookScene">
+        <div class="book" id="book">
+            <!-- Front Cover -->
+            <div class="face front-cover"></div>
+            
+            <!-- Inside Left (Back of front cover) -->
+            <div class="face back-cover">
+                <img src="https://image.qwenlm.ai/public_source/6386eeff-4b2f-4ba2-a9df-7a2a948947a9/106a6af10-e66a-4a90-b3e5-100091bfca8e.png" alt="Cute Cat">
+            </div>
+
+            <!-- Inside Right (Message Page) -->
+            <div class="face inside-page">
+                <div class="message-content" id="typewriterText"></div>
+                <span class="signature">Moussa</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="audio-hint">💖Words are not enough💖 </div>
+
+    <!-- Hidden Audio -->
+    <!-- Using a royalty free gentle piano track -->
+    <audio id="bgMusic" loop>
+        <source src="WhatsApp Audio 2026-03-13 at 8.54.06 PM.mpeg" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const book = document.getElementById('book');
+            const scene = document.getElementById('bookScene');
+            const textContainer = document.getElementById('typewriterText');
+            const audio = document.getElementById('bgMusic');
+            const floatingContainer = document.getElementById('floatingContainer');
+
+            let isOpen = false;
+            let typeWriterInterval;
+
+            // Message Content
+            const fullMessage = `Happy Birthday NINOU 🩷<br><br>I hope this year brings you joy, happiness and all the little things that make your days beautiful.<br><br>I'm really glad I got to know you. Stay the wonderful person you are.`;
+
+            // Toggle Book
+            scene.addEventListener('click', () => {
+                isOpen = !isOpen;
+                
+                if (isOpen) {
+                    book.classList.add('open');
+                    audio.volume = 0.4;
+                    audio.play().catch(e => console.log("Audio play failed interaction required"));
+                    triggerConfetti();
+                    startTypewriter(fullMessage);
+                } else {
+                    book.classList.remove('open');
+                    audio.pause();
+                    audio.currentTime = 0;
+                    stopTypewriter();
+                }
+            });
+
+            // Typewriter Effect
+            function startTypewriter(html) {
+                textContainer.innerHTML = '<span class="cursor"></span>';
+                let i = 0;
+                // We need to handle HTML tags carefully, but for simplicity in this specific prompt
+                // we will render the HTML string directly after a delay or parse it. 
+                // Given the specific requirement "text must appear exactly like this", 
+                // and typewriter usually works on chars, we'll do a simplified version 
+                // that reveals lines or uses a timeout to show the full formatted text 
+                // to ensure <br> tags work correctly without breaking the cursor.
+                
+                // Better approach for HTML content: Fade in line by line or just show it with a cursor at end
+                textContainer.innerHTML = html + '<span class="cursor"></span>';
+                
+                // Add a subtle entrance animation to the text lines
+                const lines = textContainer.querySelectorAll('br');
+                // Actually, let's just keep it simple and elegant: Show text immediately but with a fade-in
+                textContainer.style.opacity = 0;
+                textContainer.style.transition = 'opacity 1.5s ease-in';
+                setTimeout(() => {
+                    textContainer.style.opacity = 1;
+                }, 300);
+            }
+
+            function stopTypewriter() {
+                textContainer.innerHTML = '';
+                textContainer.style.opacity = 0;
+                textContainer.style.transition = 'none';
+            }
+
+            // Confetti Effect
+            function triggerConfetti() {
+                const duration = 3000;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 5,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#ffb7c5', '#ff8fa3', '#d4af37', '#ffffff']
+                    });
+                    confetti({
+                        particleCount: 5,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#ffb7c5', '#ff8fa3', '#d4af37', '#ffffff']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            }
+
+            // Floating Elements Generator
+            function createFloater() {
+                const types = ['cat', 'heart', 'sparkle'];
+                const type = types[Math.floor(Math.random() * types.length)];
+                const el = document.createElement('div');
+                el.classList.add('floater', type);
+
+                if (type === 'cat') {
+                    el.innerHTML = `<img src="https://image.qwenlm.ai/public_source/6386eeff-4b2f-4ba2-a9df-7a2a948947a9/106a6af10-e66a-4a90-b3e5-100091bfca8e.png" style="width:100%; border-radius:50%;">`;
+                    el.style.width = Math.random() * 60 + 40 + 'px';
+                } else if (type === 'heart') {
+                    el.innerHTML = '🩷';
+                    el.style.fontSize = Math.random() * 20 + 20 + 'px';
+                } else {
+                    el.innerHTML = '✨';
+                    el.style.fontSize = Math.random() * 15 + 10 + 'px';
+                }
+
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDuration = Math.random() * 10 + 10 + 's';
+                el.style.animationDelay = Math.random() * 5 + 's';
+
+                floatingContainer.appendChild(el);
+
+                // Cleanup
+                setTimeout(() => {
+                    el.remove();
+                }, 20000);
+            }
+
+            // Initialize floaters
+            setInterval(createFloater, 800);
+            
+            // Initial burst of floaters
+            for(let i=0; i<10; i++) {
+                setTimeout(createFloater, i * 300);
+            }
+        });
+    </script>
+</body>
+</html>
